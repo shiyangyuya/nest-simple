@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+<script src="https://unpkg.com/qs@6.10.2/dist/qs.js"></script>
+
+<body>
+  <div onclick="formData('zhangsan', 18)">123456</div>
+  <input id="fileInput" type="file" multiple />
+</body>
+<script>
+  /** params 方式传参 */
+  async function urlParams(id) {
+    let data = await fetch(`/api/person/${id}`).then(res => res.text())
+    const res = await axios.get('/api/person/' + id)
+    console.log(data, res)
+  }
+  urlParams(1)
+  /** query方式 */
+  async function urlQuery(name, age) {
+    let data = await fetch(`/api/person/find?name=${name}&age=${age}`).then(res => res.text())
+    console.log(data)
+  }
+  urlQuery('zhangsan', 18)
+
+  /** json或者urlencoded */
+  async function postData(name, age) {
+    let data = await fetch('/api/person', {
+      method: 'POST',
+      // headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name, age })
+    }).then(res => res.text())
+    console.log(data)
+  }
+  postData('zhangsan', 18)
+
+  /** form-data */
+  async function formData(name, age) {
+    const form = new FormData()
+    form.append('name', name)
+    form.append('age', age)
+    form.append('file1', fileInput.files[0]) // notic why can ?
+    form.append('file2', fileInput.files[1])
+    let data = await fetch('/api/person/file', {
+      method: 'POST',
+      body: form
+    }).then(res => res.text())
+  }
+</script>
+
+</html>
